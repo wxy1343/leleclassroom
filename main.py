@@ -35,7 +35,7 @@ def get_video_url(*args):
             length -= 1
             size = float(r.headers['media-length']) / 1024 / 1024
             print(f'{n + 1}.{titles[n]}：' + mp4 + ' {:.1f}MB MD5:{}'.format(size, r.headers['Content-MD5']))
-            i += 1
+        i += 1
 
 
 async def get_stages_video(stages_id):
