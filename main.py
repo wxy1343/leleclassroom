@@ -58,8 +58,9 @@ def video_download(video_dict):
     with lock:
         if 'count' not in dir():
             count = 0
-        sys.stdout.write(
-            f"\r\033[0;37;42m下载中 {count}/{video_dict['sum']}")
+            sys.stdout.write(
+                f"\r\033[0;37;42m下载中 {count}/{video_dict['sum']}\033[0m")
+        sys.stdout.flush()
         if not os.path.exists(video_dict['path']):
             os.mkdir(video_dict['path'])
     path = os.path.join(video_dict['path'], str(video_dict['n']) + '.' + video_dict['title'] + '.mp4')
@@ -73,8 +74,6 @@ def video_download(video_dict):
             if size == video_dict['size']:
                 break
             h['Range'] = 'bytes=%d-' % size
-            sys.stdout.write(
-                f"\r\033[0;37;42m下载中 {count}/{video_dict['sum']}\t{str(video_dict['n']) + '.' + video_dict['title'] + '.mp4'}\033[0m")
             r = requests.get(video_dict['url'], headers=h, stream=True, timeout=5)
             if r.status_code == 404:
                 raise Exception
@@ -91,13 +90,18 @@ def video_download(video_dict):
             return
     with lock:
         count += 1
+        sys.stdout.write(
+            f"\r\033[0;37;42m下载中 {count}/{video_dict['sum']}\033[0m")
 
 
 if __name__ == '__main__':
+    os.system('title 乐乐课堂视频爬取 @wxy1343')
     stages_url = 'http://www.leleketang.com/cr/stages.php?id={stages_id}'
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36'}
     n = int(input('请输入标签id：'))
     get_stages_video(n)
+    print('爬取完毕')
     pool.map(video_download, video_list)
-    sys.stdout.write('\r下载完成')
+    print('\n下载完成')
+    os.system('pause')
